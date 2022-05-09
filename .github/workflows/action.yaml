@@ -1,0 +1,56 @@
+---
+name: Sonarqube-Scan
+on:
+  workflow_call:
+    inputs:
+      wireguardDevEndpoint:
+        required: true
+        type: string
+      sonarqubeHostURL:
+        required: true
+        type: string
+    secrets:
+      wireguardDevPrivateKey:
+        required: true
+      wireguardDevPublicKey:
+        required: true
+      sonarqubeToken:
+        required: true
+jobs:
+  sonarqube-scan:
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    steps:
+      - name: Install wireguard
+        run: |
+          sudo apt-get install wireguard
+          sudo apt-get install openresolv
+
+      - uses: actions/checkout@v2
+
+      - name: Create wireguard tunnel configuration
+        run: |
+          sed -i -e "s@{{WIREGUARD_DEV_PRIVATE_KEY}}@${{ secrets.wireguardDevPrivateKey }}@" $GITHUB_WORKSPACE/.github/tunnel.conf
+          sed -i -e "s@{{WIREGUARD_DEV_SERVER_PUBLIC_KEY}}@${{ secrets.wireguardDevPublicKey }}@" $GITHUB_WORKSPACE/.github/tunnel.conf
+          sed -i -e "s@{{WIREGUARD_DEV_SERVER_ENDPOINT}}@${{ inputs.wireguardDevEndpoint }}@" $GITHUB_WORKSPACE/.github/tunnel.conf
+          sudo cp $GITHUB_WORKSPACE/.github/tunnel.conf /etc/wireguard/
+
+      - name: Open tunnel
+        run: wg-quick up tunnel
+
+      #      - name: Test sonar URL
+      #        run: curl -k "${{ secrets.SONAR_HOST_URL }}/api/system/status"
+      #
+      #      - name: Download scanner manually
+      #        run: wget -P /opt/sonar-scanner/.sonar/cache "${{ secrets.SONAR_HOST_URL }}/batch/file?name=sonar-scanner-engine-shaded-9.1.0.47736-all.jar"
+      #
+
+      - uses: mathrix-education/sonar-scanner@master
+        with:
+          version: 4.2.0.1873 # required
+          scan: true
+          args: --debug -Dsonar.login=${{ secrets.sonarqubeToken }} -Dsonar.host.url=${{ inputs.sonarqubeHostURL }}
+
+      - name: Close tunnel
+        run: wg-quick down tunnel
