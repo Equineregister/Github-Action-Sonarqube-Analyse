@@ -3,16 +3,14 @@ name: Sonarqube-Scan
 on:
   workflow_call:
     inputs:
+    secrets:
       wireguardDevEndpoint:
         required: true
-        type: string
-      sonarqubeHostURL:
-        required: true
-        type: string
-    secrets:
       wireguardDevPrivateKey:
         required: true
       wireguardDevPublicKey:
+        required: true
+      sonarqubeHostURL:
         required: true
       sonarqubeToken:
         required: true
