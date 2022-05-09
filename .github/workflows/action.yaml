@@ -30,7 +30,7 @@ jobs:
         run: |
           sed -i -e "s@{{WIREGUARD_DEV_PRIVATE_KEY}}@${{ secrets.wireguardDevPrivateKey }}@" $GITHUB_WORKSPACE/.github/tunnel.conf
           sed -i -e "s@{{WIREGUARD_DEV_SERVER_PUBLIC_KEY}}@${{ secrets.wireguardDevPublicKey }}@" $GITHUB_WORKSPACE/.github/tunnel.conf
-          sed -i -e "s@{{WIREGUARD_DEV_SERVER_ENDPOINT}}@${{ inputs.wireguardDevEndpoint }}@" $GITHUB_WORKSPACE/.github/tunnel.conf
+          sed -i -e "s@{{WIREGUARD_DEV_SERVER_ENDPOINT}}@${{ secrets.wireguardDevEndpoint }}@" $GITHUB_WORKSPACE/.github/tunnel.conf
           sudo cp $GITHUB_WORKSPACE/.github/tunnel.conf /etc/wireguard/
 
       - name: Open tunnel
@@ -47,7 +47,7 @@ jobs:
         with:
           version: 4.2.0.1873 # required
           scan: true
-          args: --debug -Dsonar.login=${{ secrets.sonarqubeToken }} -Dsonar.host.url=${{ inputs.sonarqubeHostURL }}
+          args: --debug -Dsonar.login=${{ secrets.sonarqubeToken }} -Dsonar.host.url=${{ secrets.sonarqubeHostURL }}
 
       - name: Close tunnel
         run: wg-quick down tunnel
