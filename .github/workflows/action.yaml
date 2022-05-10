@@ -2,6 +2,10 @@
 name: Sonarqube-Scan
 on:
   workflow_call:
+    inputs:
+      projectName:
+        required: false
+        type: string
     secrets:
       wireguardDevEndpoint:
         required: true
