@@ -51,6 +51,7 @@ jobs:
         with:
           version: 4.2.0.1873 # required
           scan: true
+          options: sonar.projectKey=@{{ inputs.projectName }}
           args: --debug -Dsonar.login=${{ secrets.sonarqubeToken }} -Dsonar.host.url=${{ secrets.sonarqubeHostURL }}
 
       - name: Close tunnel
