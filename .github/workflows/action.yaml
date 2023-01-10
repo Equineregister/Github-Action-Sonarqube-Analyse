@@ -47,11 +47,11 @@ jobs:
       #        run: wget -P /opt/sonar-scanner/.sonar/cache "${{ secrets.SONAR_HOST_URL }}/batch/file?name=sonar-scanner-engine-shaded-9.1.0.47736-all.jar"
       #
 
-      - uses: mathrix-education/sonar-scanner@master
-        with:
-          version: 4.2.0.1873 # required
-          scan: true
-          args: --debug -Dsonar.login=${{ secrets.sonarqubeToken }} -Dsonar.host.url=${{ secrets.sonarqubeHostURL }} -Dsonar.projectKey=${{ inputs.projectName }}
+#      - uses: mathrix-education/sonar-scanner@master
+#        with:
+#          version: 4.2.0.1873 # required
+#          scan: true
+#          args: --debug -Dsonar.login=${{ secrets.sonarqubeToken }} -Dsonar.host.url=${{ secrets.sonarqubeHostURL }} -Dsonar.projectKey=${{ inputs.projectName }}
 
       - name: Close tunnel
         run: wg-quick down tunnel
